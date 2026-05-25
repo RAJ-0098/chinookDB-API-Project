@@ -1,38 +1,22 @@
 from fastapi import FastAPI
-from sqlalchemy import text
-from app.db import engine
+
+from app.routes.customers import router as customer_router
+from app.routes.albums import router as album_router
+from app.routes.tracks import router as track_router
 
 app = FastAPI()
 
+
+app.include_router(customer_router)
+app.include_router(album_router)
+app.include_router(track_router)
+
+
 @app.get("/")
 def home():
+
     return {
         "message": "Chinook API Running"
     }
-
-@app.get("/customers")
-def get_customers():
-
-    query = text("""
-        SELECT customer_id,
-               first_name,
-               last_name,
-               email
-        FROM customer
-        LIMIT 10
-    """)
-
-    with engine.connect() as conn:
-
-        result = conn.execute(query)
-
-        customers = []
-
-        for row in result:
-            customers.append({
-                "id": row.customer_id,
-                "name": row.first_name + " " + row.last_name,
-                "email": row.email
-            })
-
-    return customers
+# the 3,4,5 lines import modules from seperate files.
+# the 10,11,12 lines go inside the imported modules and files.
